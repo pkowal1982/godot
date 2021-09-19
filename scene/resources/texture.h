@@ -977,6 +977,7 @@ private:
 
 protected:
 	static void _bind_methods();
+	void on_format_changed();
 
 public:
 	virtual int get_width() const override;
