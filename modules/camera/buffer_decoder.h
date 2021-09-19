@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  register_types.cpp                                                   */
+/*  buffer_decoder.h                                                     */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,29 +28,89 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#include "register_types.h"
+#ifndef BUFFERDECODER_H
+#define BUFFERDECODER_H
 
-#if defined(X11_ENABLED)
-#include "camera_linux.h"
-#endif
-#if defined(WINDOWS_ENABLED)
-#include "camera_win.h"
-#endif
-#if defined(OSX_ENABLED)
-#include "camera_osx.h"
-#endif
+#include "core/io/image.h"
+#include "core/templates/vector.h"
+#include "servers/camera_server.h"
+#include <linux/videodev2.h>
+#include <stdint.h>
 
-void register_camera_types() {
-#if defined(X11_ENABLED)
-	CameraServer::make_default<CameraLinux>();
-#endif
-#if defined(WINDOWS_ENABLED)
-	CameraServer::make_default<CameraWindows>();
-#endif
-#if defined(OSX_ENABLED)
-	CameraServer::make_default<CameraOSX>();
-#endif
-}
+class CameraFeed;
 
-void unregister_camera_types() {
-}
+struct streaming_buffer {
+	void *start;
+	size_t length;
+};
+
+class BufferDecoder {
+protected:
+	CameraFeed *camera_feed;
+	int width;
+	int height;
+
+public:
+	virtual void decode(streaming_buffer buffer) = 0;
+
+	BufferDecoder(CameraFeed *camera_feed);
+	virtual ~BufferDecoder(){};
+};
+
+class AbstractYuyvBufferDecoder : public BufferDecoder {
+protected:
+	int *component_indexes;
+
+public:
+	AbstractYuyvBufferDecoder(CameraFeed *camera_feed);
+	~AbstractYuyvBufferDecoder();
+};
+
+class SeparateYuyvBufferDecoder : public AbstractYuyvBufferDecoder {
+private:
+	Vector<uint8_t> y_image_data;
+	Vector<uint8_t> cbcr_image_data;
+
+public:
+	SeparateYuyvBufferDecoder(CameraFeed *camera_feed);
+	void decode(streaming_buffer buffer);
+};
+
+class YuyvToGrayscaleBufferDecoder : public AbstractYuyvBufferDecoder {
+private:
+	Vector<uint8_t> image_data;
+
+public:
+	YuyvToGrayscaleBufferDecoder(CameraFeed *camera_feed);
+	void decode(streaming_buffer buffer);
+};
+
+class YuyvToRgbBufferDecoder : public AbstractYuyvBufferDecoder {
+private:
+	Vector<uint8_t> image_data;
+
+public:
+	YuyvToRgbBufferDecoder(CameraFeed *camera_feed);
+	void decode(streaming_buffer buffer);
+};
+
+class CopyBufferDecoder : public BufferDecoder {
+private:
+	Vector<uint8_t> image_data;
+	bool rgba;
+
+public:
+	CopyBufferDecoder(CameraFeed *camera_feed, bool rgba);
+	void decode(streaming_buffer buffer);
+};
+
+class JpegBufferDecoder : public BufferDecoder {
+private:
+	Vector<uint8_t> image_data;
+
+public:
+	JpegBufferDecoder(CameraFeed *camera_feed);
+	void decode(streaming_buffer buffer);
+};
+
+#endif

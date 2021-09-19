@@ -1,5 +1,5 @@
 /*************************************************************************/
-/*  register_types.cpp                                                   */
+/*  camera_linux.h                                                       */
 /*************************************************************************/
 /*                       This file is part of:                           */
 /*                           GODOT ENGINE                                */
@@ -28,29 +28,39 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-#include "register_types.h"
+#ifndef CAMERALINUX_H
+#define CAMERALINUX_H
 
-#if defined(X11_ENABLED)
-#include "camera_linux.h"
-#endif
-#if defined(WINDOWS_ENABLED)
-#include "camera_win.h"
-#endif
-#if defined(OSX_ENABLED)
-#include "camera_osx.h"
-#endif
+#include "camera_feed_linux.h"
+#include "core/os/mutex.h"
+#include "servers/camera_server.h"
+#include <dirent.h>
+#include <fcntl.h>
+#include <linux/videodev2.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
-void register_camera_types() {
-#if defined(X11_ENABLED)
-	CameraServer::make_default<CameraLinux>();
-#endif
-#if defined(WINDOWS_ENABLED)
-	CameraServer::make_default<CameraWindows>();
-#endif
-#if defined(OSX_ENABLED)
-	CameraServer::make_default<CameraOSX>();
-#endif
-}
+class CameraLinux : public CameraServer {
+private:
+	SafeFlag exit_flag;
+	Thread camera_thread;
+	Mutex camera_mutex;
 
-void unregister_camera_types() {
-}
+	static void camera_thread_func(void *p_camera_linux);
+
+	void update_devices();
+	bool has_device(String device_name);
+	void add_device(String device_name);
+	void remove_device(String device_name);
+	int open_device(String device_name);
+	bool is_active(String device_name);
+	bool is_video_capture_device(int file_descriptor);
+	bool can_query_format(int file_descriptor, int type);
+
+public:
+	CameraLinux();
+	~CameraLinux();
+};
+
+#endif
