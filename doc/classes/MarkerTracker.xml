@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="MarkerTracker" inherits="RefCounted" version="4.0">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="track">
+			<return type="Vector2i" />
+			<argument index="0" name="image" type="Image" />
+			<argument index="1" name="marker" type="Image" />
+			<argument index="2" name="destination_image" type="Image" default="null" />
+			<description>
+				Find marker in the image. Update destination_image if it's not null.
+			</description>
+		</method>
+	</methods>
+</class>
