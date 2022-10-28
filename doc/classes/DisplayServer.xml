@@ -1589,6 +1589,13 @@
 				[b]Note:[/b] This method is implemented only on macOS.
 			</description>
 		</method>
+		<method name="is_caps_lock_on" qualifiers="const">
+			<return type="bool" />
+			<description>
+				Returns [code]true[/code] if Caps Lock is on.
+				[b]Note:[/b] Remember Caps Lock state is different from Caps Lock key being pressed/released.
+			</description>
+		</method>
 		<method name="is_dark_mode" qualifiers="const">
 			<return type="bool" />
 			<description>
