@@ -92,6 +92,12 @@ public:
 		CONTEXT_ENGINE,
 	};
 
+	enum LockKey {
+		CAPS_LOCK_KEY = 1,
+		NUM_LOCK_KEY = 2,
+		SCROLL_LOCK_KEY = 4,
+	};
+
 	typedef DisplayServer *(*CreateFunction)(const String &, WindowMode, VSyncMode, uint32_t, const Point2i *, const Size2i &, int p_screen, Context, int64_t p_parent_window, Error &r_error);
 	typedef Vector<String> (*GetRenderingDriversFunction)();
 
@@ -842,6 +848,7 @@ public:
 	virtual String keyboard_get_layout_name(int p_index) const;
 	virtual Key keyboard_get_keycode_from_physical(Key p_keycode) const;
 	virtual Key keyboard_get_label_from_physical(Key p_keycode) const;
+	virtual bool is_lock_key_on(LockKey p_lock_key = CAPS_LOCK_KEY) const;
 	virtual void show_emoji_and_symbol_picker() const;
 	virtual bool color_picker(const Callable &p_callback);
 
@@ -1013,3 +1020,4 @@ VARIANT_ENUM_CAST(DisplayServer::CursorShape)
 VARIANT_ENUM_CAST(DisplayServer::VSyncMode)
 VARIANT_ENUM_CAST(DisplayServer::TTSUtteranceEvent)
 VARIANT_ENUM_CAST(DisplayServer::FileDialogMode)
+VARIANT_ENUM_CAST(DisplayServer::LockKey)

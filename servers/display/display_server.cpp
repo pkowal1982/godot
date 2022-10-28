@@ -1197,6 +1197,10 @@ Key DisplayServer::keyboard_get_label_from_physical(Key p_keycode) const {
 	ERR_FAIL_V_MSG(p_keycode, "Not supported by this display server.");
 }
 
+bool DisplayServer::is_lock_key_on(LockKey p_lock_key) const {
+	return false;
+}
+
 void DisplayServer::show_emoji_and_symbol_picker() const {
 }
 
@@ -1594,6 +1598,7 @@ void DisplayServer::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("keyboard_get_layout_name", "index"), &DisplayServer::keyboard_get_layout_name);
 	ClassDB::bind_method(D_METHOD("keyboard_get_keycode_from_physical", "keycode"), &DisplayServer::keyboard_get_keycode_from_physical);
 	ClassDB::bind_method(D_METHOD("keyboard_get_label_from_physical", "keycode"), &DisplayServer::keyboard_get_label_from_physical);
+	ClassDB::bind_method(D_METHOD("is_lock_key_on", "lock_key"), &DisplayServer::is_lock_key_on, DEFVAL(CAPS_LOCK_KEY));
 
 	ClassDB::bind_method(D_METHOD("show_emoji_and_symbol_picker"), &DisplayServer::show_emoji_and_symbol_picker);
 	ClassDB::bind_method(D_METHOD("color_picker", "callback"), &DisplayServer::color_picker);
@@ -1794,6 +1799,10 @@ void DisplayServer::_bind_methods() {
 	BIND_ENUM_CONSTANT(KEYBOARD_TYPE_EMAIL_ADDRESS);
 	BIND_ENUM_CONSTANT(KEYBOARD_TYPE_PASSWORD);
 	BIND_ENUM_CONSTANT(KEYBOARD_TYPE_URL);
+
+	BIND_ENUM_CONSTANT(CAPS_LOCK_KEY);
+	BIND_ENUM_CONSTANT(NUM_LOCK_KEY);
+	BIND_ENUM_CONSTANT(SCROLL_LOCK_KEY);
 
 	BIND_ENUM_CONSTANT(CURSOR_ARROW);
 	BIND_ENUM_CONSTANT(CURSOR_IBEAM);

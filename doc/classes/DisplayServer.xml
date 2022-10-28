@@ -1603,6 +1603,15 @@
 				[b]Note:[/b] This method is implemented on Android, iOS, macOS, Windows, and Linux (X11/Wayland).
 			</description>
 		</method>
+		<method name="is_lock_key_on" qualifiers="const">
+			<return type="bool" />
+			<param index="0" name="lock_key" type="int" enum="DisplayServer.LockKey" default="1" />
+			<description>
+				Returns [code]true[/code] if specified lock key is on.
+				[param lock_key] Key being checked.
+				[b]Note:[/b] Remember that state of the lock key is different from key being pressed/released.
+			</description>
+		</method>
 		<method name="is_touchscreen_available" qualifiers="const">
 			<return type="bool" />
 			<description>
@@ -3013,6 +3022,15 @@
 		</constant>
 		<constant name="KEYBOARD_TYPE_URL" value="7" enum="VirtualKeyboardType">
 			Virtual keyboard with additional keys to assist with typing URLs.
+		</constant>
+		<constant name="CAPS_LOCK_KEY" value="1" enum="LockKey">
+			Caps Lock key.
+		</constant>
+		<constant name="NUM_LOCK_KEY" value="2" enum="LockKey">
+			Num Lock key.
+		</constant>
+		<constant name="SCROLL_LOCK_KEY" value="4" enum="LockKey">
+			Scroll Lock key.
 		</constant>
 		<constant name="CURSOR_ARROW" value="0" enum="CursorShape">
 			Arrow cursor shape. This is the default when not pointing anything that overrides the mouse cursor, such as a [LineEdit] or [TextEdit].

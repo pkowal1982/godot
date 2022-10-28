@@ -568,6 +568,7 @@ public:
 	virtual String keyboard_get_layout_name(int p_index) const override;
 	virtual Key keyboard_get_keycode_from_physical(Key p_keycode) const override;
 	virtual Key keyboard_get_label_from_physical(Key p_keycode) const override;
+	virtual bool is_lock_key_on(LockKey p_lock_key = CAPS_LOCK_KEY) const override;
 
 	virtual bool color_picker(const Callable &p_callback) override;
 

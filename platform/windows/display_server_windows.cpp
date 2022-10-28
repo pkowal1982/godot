@@ -3694,6 +3694,19 @@ Key DisplayServerWindows::keyboard_get_label_from_physical(Key p_keycode) const 
 	return p_keycode;
 }
 
+bool DisplayServerWindows::is_lock_key_on(LockKey p_lock_key) const {
+	switch (p_lock_key) {
+		case SCROLL_LOCK_KEY:
+			return GetKeyState(VK_SCROLL) & 1;
+		case NUM_LOCK_KEY:
+			return GetKeyState(VK_NUMLOCK) & 1;
+		case CAPS_LOCK_KEY:
+			return GetKeyState(VK_CAPITAL) & 1;
+		default:
+			return false;
+	}
+}
+
 void DisplayServerWindows::show_emoji_and_symbol_picker() const {
 	// Send Win + Period shortcut, there's no non-WinRT public API.
 

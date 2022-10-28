@@ -3710,6 +3710,12 @@ Key DisplayServerX11::keyboard_get_label_from_physical(Key p_keycode) const {
 	return (Key)(key | modifiers);
 }
 
+bool DisplayServerX11::is_lock_key_on(LockKey p_lock_key) const {
+	unsigned int n;
+	Status status = XkbGetIndicatorState(x11_display, XkbUseCoreKbd, &n);
+	return status == Success && n & p_lock_key;
+}
+
 bool DisplayServerX11::color_picker(const Callable &p_callback) {
 #ifdef DBUS_ENABLED
 	if (!portal_desktop) {
