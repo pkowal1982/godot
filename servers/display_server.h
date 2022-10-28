@@ -459,6 +459,7 @@ public:
 	virtual String keyboard_get_layout_language(int p_index) const;
 	virtual String keyboard_get_layout_name(int p_index) const;
 	virtual Key keyboard_get_keycode_from_physical(Key p_keycode) const;
+	virtual bool is_caps_lock_on() const;
 
 	virtual int tablet_get_driver_count() const { return 1; };
 	virtual String tablet_get_driver_name(int p_driver) const { return "default"; };

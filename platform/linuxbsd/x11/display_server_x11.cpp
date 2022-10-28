@@ -2777,6 +2777,12 @@ Key DisplayServerX11::keyboard_get_keycode_from_physical(Key p_keycode) const {
 	return (Key)(key | modifiers);
 }
 
+bool DisplayServerX11::is_caps_lock_on() const {
+	unsigned n;
+	XkbGetIndicatorState(x11_display, XkbUseCoreKbd, &n);
+	return (n & XInternAtom(x11_display, "Caps Lock", False)) == 1;
+}
+
 DisplayServerX11::Property DisplayServerX11::_read_property(Display *p_display, Window p_window, Atom p_property) {
 	Atom actual_type = None;
 	int actual_format = 0;

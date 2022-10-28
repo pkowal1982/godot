@@ -1896,6 +1896,10 @@ Key DisplayServerWindows::keyboard_get_keycode_from_physical(Key p_keycode) cons
 	return (Key)(KeyMappingWindows::get_keysym(vk) | modifiers);
 }
 
+bool DisplayServerWindows::is_caps_lock_on() const {
+	return (GetKeyState(VK_CAPITAL) & 0x0001) != 0;
+}
+
 String _get_full_layout_name_from_registry(HKL p_layout) {
 	String id = "SYSTEM\\CurrentControlSet\\Control\\Keyboard Layouts\\" + String::num_int64((int64_t)p_layout, 16, false).lpad(8, "0");
 	String ret;
