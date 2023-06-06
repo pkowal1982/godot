@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="HsvTracker" inherits="RefCounted" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../class.xsd">
+	<brief_description>
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="track">
+			<return type="Vector3" />
+			<param index="0" name="image" type="Image" />
+			<param index="1" name="example" type="Color" />
+			<param index="2" name="threshold" type="Vector3" />
+			<param index="3" name="destination_image" type="Image" default="null" />
+			<description>
+				Find center of pixels with matching color. Update destination_image if it's not null. Try to match pixels to [param example] color. [param threshold] x, y, z are used to compare h, s, v components. 0 means exact match, 1 matches everything.
+				x, y components are center of matched area.
+				z component is estimated diameter.
+			</description>
+		</method>
+	</methods>
+</class>
