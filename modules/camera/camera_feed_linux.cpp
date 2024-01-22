@@ -129,7 +129,7 @@ bool CameraFeedLinux::request_buffers() {
 	}
 
 	buffer_count = requestbuffers.count;
-	buffers = new streaming_buffer[buffer_count];
+	buffers = new StreamingBuffer[buffer_count];
 
 	for (unsigned int i = 0; i < buffer_count; i++) {
 		struct v4l2_buffer buffer;

@@ -50,13 +50,13 @@ private:
 	static void camera_thread_func(void *p_camera_linux);
 
 	void update_devices();
-	bool has_device(String device_name);
-	void add_device(String device_name);
-	void remove_device(String device_name);
-	int open_device(String device_name);
-	bool is_active(String device_name);
-	bool is_video_capture_device(int file_descriptor);
-	bool can_query_format(int file_descriptor, int type);
+	bool has_device(String p_device_name);
+	void add_device(String p_device_name);
+	void remove_device(String p_device_name);
+	int open_device(String p_device_name);
+	bool is_active(String p_device_name);
+	bool is_video_capture_device(int p_file_descriptor);
+	bool can_query_format(int p_file_descriptor, int p_type);
 
 public:
 	CameraLinux();

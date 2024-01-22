@@ -32,25 +32,27 @@
 #define CAMERA_FEED_LINUX_H
 
 #include "buffer_decoder.h"
+
 #include "core/os/thread.h"
 #include "servers/camera/camera_feed.h"
+
 #include <fcntl.h>
 #include <linux/videodev2.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <unistd.h>
 
-struct streaming_buffer;
+struct StreamingBuffer;
 
 class CameraFeedLinux : public CameraFeed {
 private:
 	SafeFlag exit_flag;
-	Thread *thread;
+	Thread *thread = nullptr;
 	String device_name;
 	int file_descriptor;
-	streaming_buffer *buffers;
+	StreamingBuffer *buffers = nullptr;
 	unsigned int buffer_count;
-	BufferDecoder *buffer_decoder;
+	BufferDecoder *buffer_decoder = nullptr;
 
 	static void update_buffer_thread_func(void *p);
 

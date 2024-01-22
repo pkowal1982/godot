@@ -29,6 +29,7 @@
 /**************************************************************************/
 
 #include "buffer_decoder.h"
+
 #include "servers/camera/camera_feed.h"
 
 BufferDecoder::BufferDecoder(CameraFeed *p_camera_feed) {
@@ -67,7 +68,7 @@ SeparateYuyvBufferDecoder::SeparateYuyvBufferDecoder(CameraFeed *p_camera_feed) 
 	cbcr_image_data.resize(width * height);
 }
 
-void SeparateYuyvBufferDecoder::decode(streaming_buffer p_buffer) {
+void SeparateYuyvBufferDecoder::decode(StreamingBuffer p_buffer) {
 	uint8_t *y_dst = (uint8_t *)y_image_data.ptrw();
 	uint8_t *uv_dst = (uint8_t *)cbcr_image_data.ptrw();
 	uint8_t *src = (uint8_t *)p_buffer.start;
@@ -99,7 +100,7 @@ YuyvToGrayscaleBufferDecoder::YuyvToGrayscaleBufferDecoder(CameraFeed *p_camera_
 	image_data.resize(width * height);
 }
 
-void YuyvToGrayscaleBufferDecoder::decode(streaming_buffer p_buffer) {
+void YuyvToGrayscaleBufferDecoder::decode(StreamingBuffer p_buffer) {
 	uint8_t *dst = (uint8_t *)image_data.ptrw();
 	uint8_t *src = (uint8_t *)p_buffer.start;
 	uint8_t *y0_src = src + component_indexes[0];
@@ -123,7 +124,7 @@ YuyvToRgbBufferDecoder::YuyvToRgbBufferDecoder(CameraFeed *p_camera_feed) :
 	image_data.resize(width * height * 3);
 }
 
-void YuyvToRgbBufferDecoder::decode(streaming_buffer p_buffer) {
+void YuyvToRgbBufferDecoder::decode(StreamingBuffer p_buffer) {
 	uint8_t *src = (uint8_t *)p_buffer.start;
 	uint8_t *y0_src = src + component_indexes[0];
 	uint8_t *y1_src = src + component_indexes[1];
@@ -162,7 +163,7 @@ CopyBufferDecoder::CopyBufferDecoder(CameraFeed *p_camera_feed, bool p_rgba) :
 	image_data.resize(width * height * (rgba ? 4 : 2));
 }
 
-void CopyBufferDecoder::decode(streaming_buffer p_buffer) {
+void CopyBufferDecoder::decode(StreamingBuffer p_buffer) {
 	uint8_t *dst = (uint8_t *)image_data.ptrw();
 	memcpy(dst, p_buffer.start, p_buffer.length);
 
@@ -174,7 +175,7 @@ JpegBufferDecoder::JpegBufferDecoder(CameraFeed *p_camera_feed) :
 		BufferDecoder(p_camera_feed) {
 }
 
-void JpegBufferDecoder::decode(streaming_buffer p_buffer) {
+void JpegBufferDecoder::decode(StreamingBuffer p_buffer) {
 	image_data.resize(p_buffer.length);
 	uint8_t *dst = (uint8_t *)image_data.ptrw();
 	memcpy(dst, p_buffer.start, p_buffer.length);

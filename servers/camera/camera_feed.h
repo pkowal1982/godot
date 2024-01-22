@@ -33,8 +33,6 @@
 
 #include "core/io/image.h"
 #include "core/math/transform_2d.h"
-#include "core/typedefs.h"
-#include "core/variant/array.h"
 #include "servers/camera_server.h"
 #include "servers/rendering_server.h"
 
@@ -116,7 +114,7 @@ public:
 	void set_YCbCr_img(const Ref<Image> &p_ycbcr_img);
 	void set_YCbCr_imgs(const Ref<Image> &p_y_img, const Ref<Image> &p_cbcr_img);
 
-	virtual bool set_format(int index, const Dictionary &p_parameters);
+	virtual bool set_format(int p_index, const Dictionary &p_parameters);
 	Array get_formats() const;
 	FeedFormat get_format() const;
 

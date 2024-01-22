@@ -283,9 +283,9 @@ CameraFeed::FeedFormat CameraFeed::get_format() const {
 	return formats[selected_format];
 }
 
-bool CameraFeed::set_format(int index, const Dictionary &p_parameters) {
+bool CameraFeed::set_format(int p_index, const Dictionary &p_parameters) {
 	ERR_FAIL_COND_V_MSG(active, false, "Feed is active");
-	ERR_FAIL_COND_V_MSG(index < 0 || index >= formats.size(), false, "Invalid format index");
+	ERR_FAIL_INDEX_V_MSG(p_index, formats.size(), false, "Invalid format index");
 	parameters = p_parameters.duplicate();
 	return true;
 }

@@ -73,31 +73,31 @@ void CameraLinux::update_devices() {
 	}
 }
 
-bool CameraLinux::has_device(String device_name) {
+bool CameraLinux::has_device(String p_device_name) {
 	for (int i = 0; i < feeds.size(); i++) {
 		Ref<CameraFeedLinux> feed = (Ref<CameraFeedLinux>)feeds[i];
-		if (feed->get_device_name() == device_name) {
+		if (feed->get_device_name() == p_device_name) {
 			return true;
 		}
 	}
 	return false;
 }
 
-void CameraLinux::add_device(String device_name) {
-	int file_descriptor = open_device(device_name);
+void CameraLinux::add_device(String p_device_name) {
+	int file_descriptor = open_device(p_device_name);
 
 	if (file_descriptor != -1) {
 		if (is_video_capture_device(file_descriptor)) {
-			Ref<CameraFeedLinux> feed = memnew(CameraFeedLinux(device_name));
+			Ref<CameraFeedLinux> feed = memnew(CameraFeedLinux(p_device_name));
 			add_feed(feed);
 		}
 	}
 }
 
-int CameraLinux::open_device(String device_name) {
+int CameraLinux::open_device(String p_device_name) {
 	struct stat s;
 
-	if (stat(device_name.ascii(), &s) == -1) {
+	if (stat(p_device_name.ascii(), &s) == -1) {
 		return -1;
 	}
 
@@ -105,14 +105,14 @@ int CameraLinux::open_device(String device_name) {
 		return -1;
 	}
 
-	return open(device_name.ascii(), O_RDWR | O_NONBLOCK, 0);
+	return open(p_device_name.ascii(), O_RDWR | O_NONBLOCK, 0);
 }
 
 // TODO any cheaper/cleaner way to check if file descriptor is invalid?
-bool CameraLinux::is_active(String device_name) {
+bool CameraLinux::is_active(String p_device_name) {
 	struct v4l2_capability capability;
 	bool result = false;
-	int file_descriptor = open_device(device_name);
+	int file_descriptor = open_device(p_device_name);
 	if (file_descriptor != -1 && ioctl(file_descriptor, VIDIOC_QUERYCAP, &capability) != -1) {
 		result = true;
 	}
@@ -120,10 +120,10 @@ bool CameraLinux::is_active(String device_name) {
 	return result;
 }
 
-bool CameraLinux::is_video_capture_device(int file_descriptor) {
+bool CameraLinux::is_video_capture_device(int p_file_descriptor) {
 	struct v4l2_capability capability;
 
-	if (ioctl(file_descriptor, VIDIOC_QUERYCAP, &capability) == -1) {
+	if (ioctl(p_file_descriptor, VIDIOC_QUERYCAP, &capability) == -1) {
 		print_verbose("Cannot query device");
 		return false;
 	}
@@ -138,15 +138,15 @@ bool CameraLinux::is_video_capture_device(int file_descriptor) {
 		return false;
 	}
 
-	return can_query_format(file_descriptor, V4L2_BUF_TYPE_VIDEO_CAPTURE);
+	return can_query_format(p_file_descriptor, V4L2_BUF_TYPE_VIDEO_CAPTURE);
 }
 
-bool CameraLinux::can_query_format(int file_descriptor, int type) {
+bool CameraLinux::can_query_format(int p_file_descriptor, int p_type) {
 	struct v4l2_format format;
 	memset(&format, 0, sizeof(format));
-	format.type = type;
+	format.type = p_type;
 
-	return ioctl(file_descriptor, VIDIOC_G_FMT, &format) != -1;
+	return ioctl(p_file_descriptor, VIDIOC_G_FMT, &format) != -1;
 }
 
 CameraLinux::CameraLinux() {

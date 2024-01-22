@@ -34,24 +34,25 @@
 #include "core/io/image.h"
 #include "core/templates/vector.h"
 #include "servers/camera_server.h"
+
 #include <linux/videodev2.h>
 #include <stdint.h>
 
 class CameraFeed;
 
-struct streaming_buffer {
+struct StreamingBuffer {
 	void *start;
 	size_t length;
 };
 
 class BufferDecoder {
 protected:
-	CameraFeed *camera_feed;
+	CameraFeed *camera_feed = nullptr;
 	int width;
 	int height;
 
 public:
-	virtual void decode(streaming_buffer p_buffer) = 0;
+	virtual void decode(StreamingBuffer p_buffer) = 0;
 
 	BufferDecoder(CameraFeed *p_camera_feed);
 	virtual ~BufferDecoder(){};
@@ -59,7 +60,7 @@ public:
 
 class AbstractYuyvBufferDecoder : public BufferDecoder {
 protected:
-	int *component_indexes;
+	int *component_indexes = nullptr;
 
 public:
 	AbstractYuyvBufferDecoder(CameraFeed *p_camera_feed);
@@ -73,7 +74,7 @@ private:
 
 public:
 	SeparateYuyvBufferDecoder(CameraFeed *p_camera_feed);
-	void decode(streaming_buffer p_buffer);
+	void decode(StreamingBuffer p_buffer);
 };
 
 class YuyvToGrayscaleBufferDecoder : public AbstractYuyvBufferDecoder {
@@ -82,7 +83,7 @@ private:
 
 public:
 	YuyvToGrayscaleBufferDecoder(CameraFeed *p_camera_feed);
-	void decode(streaming_buffer p_buffer);
+	void decode(StreamingBuffer p_buffer);
 };
 
 class YuyvToRgbBufferDecoder : public AbstractYuyvBufferDecoder {
@@ -91,7 +92,7 @@ private:
 
 public:
 	YuyvToRgbBufferDecoder(CameraFeed *p_camera_feed);
-	void decode(streaming_buffer p_buffer);
+	void decode(StreamingBuffer p_buffer);
 };
 
 class CopyBufferDecoder : public BufferDecoder {
@@ -101,7 +102,7 @@ private:
 
 public:
 	CopyBufferDecoder(CameraFeed *p_camera_feed, bool p_rgba);
-	void decode(streaming_buffer p_buffer);
+	void decode(StreamingBuffer p_buffer);
 };
 
 class JpegBufferDecoder : public BufferDecoder {
@@ -110,7 +111,7 @@ private:
 
 public:
 	JpegBufferDecoder(CameraFeed *p_camera_feed);
-	void decode(streaming_buffer buffer);
+	void decode(StreamingBuffer buffer);
 };
 
 #endif // BUFFER_DECODER_H
