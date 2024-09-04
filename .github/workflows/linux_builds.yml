@@ -35,6 +35,18 @@ jobs:
             api-compat: true
             artifact: true
 
+          - name: Editor (target=editor)
+            cache-name: linux-editor
+            target: editor
+            sconsflags: module_mono_enabled=no
+            bin: "./bin/godot.linuxbsd.editor.x86_64"
+            build-mono: false
+            tests: false # Disabled due freeze caused by mix Mono build and CI
+            doc-test: true
+            proj-conv: true
+            api-compat: true
+            artifact: true
+
           - name: Editor with doubles and GCC sanitizers (target=editor, tests=yes, dev_build=yes, scu_build=yes, precision=double, use_asan=yes, use_ubsan=yes, linker=gold)
             cache-name: linux-editor-double-sanitizers
             target: editor
