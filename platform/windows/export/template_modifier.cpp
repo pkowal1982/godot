@@ -579,6 +579,12 @@ Error TemplateModifier::_modify_template(const Ref<EditorExportPreset> &p_preset
 	ERR_FAIL_COND_V(section_entries[section_entries.size() - 1].name != String(".reloc"), ERR_CANT_OPEN);
 	// TODO fail on not sorted by physical address?
 
+	Error error;
+	Ref<FileAccess> template_file = FileAccess::open(p_template_path, FileAccess::READ_WRITE, &error);
+	ERR_FAIL_COND_V(error != OK, ERR_CANT_OPEN);
+
+	uint64_t original_template_size = template_file->get_length();
+
 	GroupIcon group_icon = _create_group_icon(p_icon_path);
 
 	VersionInfo version_info = _create_version_info(_get_strings(p_preset));
@@ -592,22 +598,14 @@ Error TemplateModifier::_modify_template(const Ref<EditorExportPreset> &p_preset
 	resources_section_entry.size_of_raw_data = resources.size();
 
 	SectionEntry relocations_section_entry = section_entries.get(section_entries.size() - 1);
+	template_file->seek(relocations_section_entry.pointer_to_raw_data);
+	Vector<uint8_t> relocations = template_file->get_buffer(relocations_section_entry.size_of_raw_data);
 	relocations_section_entry.pointer_to_raw_data = resources_section_entry.pointer_to_raw_data + resources_section_entry.size_of_raw_data;
 	relocations_section_entry.virtual_address = resources_section_entry.virtual_address + _snap(resources_section_entry.virtual_size, PE_PAGE_SIZE);
 
 	uint32_t size_of_image = relocations_section_entry.virtual_address + _snap(relocations_section_entry.virtual_size, PE_PAGE_SIZE);
 
 	uint32_t pe_header_offset = _get_pe_header_offset(p_template_path);
-
-	Error error;
-	Ref<FileAccess> template_file = FileAccess::open(p_template_path, FileAccess::READ_WRITE, &error);
-	ERR_FAIL_COND_V(error != OK, ERR_CANT_OPEN);
-
-	Vector<uint8_t> relocations;
-	relocations.resize(relocations_section_entry.size_of_raw_data);
-	template_file->seek(relocations_section_entry.pointer_to_raw_data);
-	template_file->store_buffer(relocations);
-	uint32_t template_size = template_file->get_position();
 
 	template_file->seek(pe_header_offset + MAGIC_NUMBER_OFFSET);
 	uint16_t magic_number = template_file->get_16();
@@ -634,7 +632,7 @@ Error TemplateModifier::_modify_template(const Ref<EditorExportPreset> &p_preset
 	template_file->store_buffer(resources);
 	template_file->store_buffer(relocations);
 
-	if (template_file->get_position() < template_size) {
+	if (template_file->get_position() < original_template_size) {
 		template_file->close();
 		_truncate(p_template_path, relocations_section_entry.pointer_to_raw_data + relocations_section_entry.size_of_raw_data);
 	}
