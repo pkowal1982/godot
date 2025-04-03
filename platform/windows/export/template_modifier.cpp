@@ -609,8 +609,10 @@ Error TemplateModifier::_modify_template(const Ref<EditorExportPreset> &p_preset
 	template_file->store_buffer(relocations);
 	uint32_t template_size = template_file->get_position();
 
-	template_file->seek(pe_header_offset + SIZE_OF_OPTIONAL_HEADER_OFFSET);
-	bool pe32plus = template_file->get_16() == 240;
+	template_file->seek(pe_header_offset + MAGIC_NUMBER_OFFSET);
+	uint16_t magic_number = template_file->get_16();
+	ERR_FAIL_COND_V_MSG(magic_number != 0x10b && magic_number != 0x20b, ERR_CANT_OPEN, vformat("Magic number has wrong value: %04x", magic_number));
+	bool pe32plus = magic_number == 0x20b;
 
 	uint32_t optional_header_offset = pe_header_offset + COFF_HEADER_SIZE;
 
