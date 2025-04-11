@@ -36,10 +36,11 @@
 class TemplateModifier {
 	const uint32_t PE_PAGE_SIZE = 4096;
 	const uint32_t BLOCK_SIZE = 512;
-	const uint32_t POINTER_TO_PE_HEADER_OFFSET = 0x3c;
-	// all offsets are calculated from POINTER_TO_PE_HEADER_OFFSET, at 0 is magic string PE (0x50450000)
-	const uint32_t MAGIC_NUMBER_OFFSET = 24;
 	const uint32_t COFF_HEADER_SIZE = 24;
+	const uint32_t POINTER_TO_PE_HEADER_OFFSET = 0x3c;
+	// all offsets below are calculated from POINTER_TO_PE_HEADER_OFFSET value, at 0 is magic string PE (0x50450000)
+	const uint32_t MAGIC_NUMBER_OFFSET = 24;
+	const uint32_t SIZE_OF_INITIALIZED_DATA_OFFSET = 32;
 	const uint32_t SIZE_OF_IMAGE_OFFSET = 80;
 
 	struct ByteStream {

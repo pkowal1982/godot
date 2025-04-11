@@ -353,7 +353,7 @@ uint32_t TemplateModifier::_snap(uint32_t p_value, uint32_t p_size) const {
 }
 
 Vector<uint8_t> TemplateModifier::_create_resources(uint32_t p_virtual_address, const GroupIcon &p_group_icon, const VersionInfo &p_version_info) const {
-	// 0x04, 0x00 as string length I.C.O.N. and padding to 32 bits
+	// 0x04, 0x00 as string length ICON in UTF16 and padding to 32 bits
 	const uint8_t ICON_DIRECTORY_STRING[] = { 0x04, 0x00, 0x49, 0x00, 0x43, 0x00, 0x4f, 0x00, 0x4e, 0x00, 0x00, 0x00 };
 	const uint16_t RT_ENTRY_COUNT = 3;
 	const uint32_t icon_count = p_group_icon.images.size();
@@ -590,20 +590,18 @@ Error TemplateModifier::_modify_template(const Ref<EditorExportPreset> &p_preset
 	VersionInfo version_info = _create_version_info(_get_strings(p_preset));
 
 	SectionEntry resources_section_entry = section_entries.get(section_entries.size() - 2);
-
+	uint32_t old_resources_size_of_raw_data = resources_section_entry.size_of_raw_data;
 	Vector<uint8_t> resources = _create_resources(resources_section_entry.virtual_address, group_icon, version_info);
-
 	resources_section_entry.virtual_size = resources.size();
 	resources.resize_zeroed(_snap(resources.size(), BLOCK_SIZE));
 	resources_section_entry.size_of_raw_data = resources.size();
 
 	SectionEntry relocations_section_entry = section_entries.get(section_entries.size() - 1);
+	uint32_t old_relocations_virtual_address = relocations_section_entry.virtual_address;
 	template_file->seek(relocations_section_entry.pointer_to_raw_data);
 	Vector<uint8_t> relocations = template_file->get_buffer(relocations_section_entry.size_of_raw_data);
 	relocations_section_entry.pointer_to_raw_data = resources_section_entry.pointer_to_raw_data + resources_section_entry.size_of_raw_data;
 	relocations_section_entry.virtual_address = resources_section_entry.virtual_address + _snap(resources_section_entry.virtual_size, PE_PAGE_SIZE);
-
-	uint32_t size_of_image = relocations_section_entry.virtual_address + _snap(relocations_section_entry.virtual_size, PE_PAGE_SIZE);
 
 	uint32_t pe_header_offset = _get_pe_header_offset(p_template_path);
 
@@ -612,10 +610,19 @@ Error TemplateModifier::_modify_template(const Ref<EditorExportPreset> &p_preset
 	ERR_FAIL_COND_V_MSG(magic_number != 0x10b && magic_number != 0x20b, ERR_CANT_OPEN, vformat("Magic number has wrong value: %04x", magic_number));
 	bool pe32plus = magic_number == 0x20b;
 
-	uint32_t optional_header_offset = pe_header_offset + COFF_HEADER_SIZE;
+	template_file->seek(pe_header_offset + SIZE_OF_INITIALIZED_DATA_OFFSET);
+	uint32_t size_of_initialized_data = template_file->get_32();
+	size_of_initialized_data += resources_section_entry.size_of_raw_data - old_resources_size_of_raw_data;
+	template_file->seek(pe_header_offset + SIZE_OF_INITIALIZED_DATA_OFFSET);
+	template_file->store_32(size_of_initialized_data);
 
-	template_file->seek(optional_header_offset + SIZE_OF_IMAGE_OFFSET);
+	template_file->seek(pe_header_offset + SIZE_OF_IMAGE_OFFSET);
+	uint32_t size_of_image = template_file->get_32();
+	size_of_image += relocations_section_entry.virtual_address - old_relocations_virtual_address;
+	template_file->seek(pe_header_offset + SIZE_OF_IMAGE_OFFSET);
 	template_file->store_32(size_of_image);
+
+	uint32_t optional_header_offset = pe_header_offset + COFF_HEADER_SIZE;
 
 	template_file->seek(optional_header_offset + (pe32plus ? 132 : 116));
 	template_file->store_32(resources_section_entry.virtual_size);
