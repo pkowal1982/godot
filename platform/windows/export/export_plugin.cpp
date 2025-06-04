@@ -521,7 +521,7 @@ Error EditorExportPlatformWindows::_add_data(const Ref<EditorExportPreset> &p_pr
 		}
 	}
 
-	String tmp_icon_path = EditorPaths::get_singleton()->get_temp_dir().path_join("_rcedit.ico");
+	String tmp_icon_path = EditorPaths::get_singleton()->get_temp_dir().path_join("_tmp.ico");
 	if (!icon_path.is_empty()) {
 		if (_process_icon(p_preset, icon_path, tmp_icon_path) != OK) {
 			add_message(EXPORT_MESSAGE_WARNING, TTR("Resources Modification"), vformat(TTR("Invalid icon file \"%s\"."), icon_path));
@@ -730,11 +730,6 @@ bool EditorExportPlatformWindows::has_valid_export_configuration(const Ref<Edito
 		if (arch != exe_arch) {
 			err += vformat(TTR("Mismatching custom release export template executable architecture: found \"%s\", expected \"%s\"."), exe_arch, arch) + "\n";
 		}
-	}
-
-	String rcedit_path = EDITOR_GET("export/windows/rcedit");
-	if (p_preset->get("application/modify_resources") && rcedit_path.is_empty()) {
-		err += TTR("The rcedit tool must be configured in the Editor Settings (Export > Windows > rcedit) to change the icon or app information data.") + "\n";
 	}
 
 	if (!err.is_empty()) {

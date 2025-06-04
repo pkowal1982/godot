@@ -258,7 +258,6 @@ EditorPropertyNameProcessor::EditorPropertyNameProcessor() {
 	capitalize_string_remaps["ppc64"] = "ppc64";
 	capitalize_string_remaps["pvrtc"] = "PVRTC";
 	capitalize_string_remaps["pvs"] = "PVS";
-	capitalize_string_remaps["rcedit"] = "rcedit";
 	capitalize_string_remaps["rcodesign"] = "rcodesign";
 	capitalize_string_remaps["rdo"] = "RDO";
 	capitalize_string_remaps["rgb"] = "RGB";
