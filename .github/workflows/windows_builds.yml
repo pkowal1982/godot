@@ -6,9 +6,30 @@ on:
 # Global Settings
 env:
   SCONS_FLAGS: >-
-    dev_mode=yes
-    module_text_server_fb_enabled=yes
+    dev_mode=no
     debug_symbols=no
+    modules_enabled_by_default=no
+    module_freetype_enabled=yes
+    module_gdscript_enabled=yes
+    module_jpg_enabled=yes
+    module_regex_enabled=yes
+    module_svg_enabled=yes
+    module_text_server_adv_enabled=yes
+    module_zip_enabled=yes
+    module_webp_enabled=yes
+    module_astcenc_enabled=yes
+    disable_3d=yes
+    disable_advanced_gui=no
+    disable_navigation_2d=yes
+    disable_navigation_3d=yes
+    disable_physics_2d=yes
+    disable_physics_3d=yes
+    disable_xr=yes
+    deprecated=no
+    brotli=no
+    optimize=size_extra
+    lto=full
+    accesskit=no
   SCONS_CACHE_MSVC_CONFIG: true
   PYTHONIOENCODING: utf8
 
@@ -22,38 +43,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Editor (target=editor)
-            cache-name: windows-editor
-            target: editor
-            scons-flags: >-
-              windows_subsystem=console
-              vsproj=yes
-              vsproj_gen_only=no
-            bin: ./bin/godot.windows.editor.x86_64.exe
-            compiler: msvc
-
-          - name: Editor w/ clang-cl (target=editor, use_llvm=yes)
-            cache-name: windows-editor-clang
-            target: editor
-            scons-flags: >-
-              windows_subsystem=console
-              use_llvm=yes
-            bin: ./bin/godot.windows.editor.x86_64.llvm.exe
-            compiler: clang
-
           - name: Template (target=template_release)
             cache-name: windows-template
             target: template_release
             bin: ./bin/godot.windows.template_release.x86_64.console.exe
             compiler: msvc
-
-          - name: Template w/ GCC (target=template_release, use_mingw=yes)
-            cache-name: windows-template-gcc
-            # MinGW takes MUCH longer to compile; save time by only targeting Template.
-            target: template_release
-            scons-flags: use_mingw=yes
-            bin: ./bin/godot.windows.template_release.x86_64.console.exe
-            compiler: gcc
 
     steps:
       - name: Checkout
@@ -133,9 +127,3 @@ jobs:
         uses: ./.github/actions/upload-artifact
         with:
           name: ${{ matrix.cache-name }}
-
-      - name: Unit tests
-        run: |
-          ${{ matrix.bin }} --version
-          ${{ matrix.bin }} --help
-          ${{ matrix.bin }} --test --force-colors
