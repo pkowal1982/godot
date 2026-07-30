@@ -35,6 +35,8 @@ env:
     lto=full
     x11=yes
     accesskit=no
+    vulkan=no
+    renderer_vulkan=no
   GODOT_CPP_BRANCH: 4.5
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true

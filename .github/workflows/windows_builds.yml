@@ -30,6 +30,8 @@ env:
     optimize=size_extra
     lto=full
     accesskit=no
+    vulkan=no
+    renderer_vulkan=no
   SCONS_CACHE_MSVC_CONFIG: true
   PYTHONIOENCODING: utf8
 
