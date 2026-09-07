@@ -3953,6 +3953,17 @@ void ScriptEditor::_update_document_name_button() {
 }
 
 void ScriptEditor::_help_search(const String &p_text) {
+	if (p_text == "") {
+		TextEditorBase *teb = Object::cast_to<TextEditorBase>(tab_container->get_current_tab_control());
+		if (teb != nullptr) {
+			CodeEdit *ce = teb->get_code_editor()->get_text_editor();
+			if (ce->has_selection()) {
+				help_search_dialog->popup_dialog(ce->get_selected_text());
+				return;
+			}
+		}
+	}
+	help_search_dialog->popup_dialog(p_text);
 	script_editor->help_search_dialog->popup_dialog(p_text);
 }
 
